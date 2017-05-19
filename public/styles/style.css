@@ -41,6 +41,17 @@ body {
     padding: 20px;
     height: 770px;
 }
+li .system-message {
+    color: #ffffff;
+    line-height: 26px;
+    font-size: 16px;
+    text-align: center;
+    background: #7d6b71;
+    border-radius: 7px;
+    margin-bottom: 30px;
+    width: 90%;
+    position: relative;
+}
 .people-list ul li {
     padding-bottom: 20px;
 }

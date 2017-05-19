@@ -33,7 +33,7 @@ while (true) {
 		perform_handshaking($header, $socket_new, $host, $port); //perform websocket handshake
 
 		socket_getpeername($socket_new, $ip); //get ip address of connected socket
-		$response = mask(json_encode(array('type'=>'system', 'message'=>$ip.' connected'))); //prepare json data
+		$response = mask(json_encode(array('type'=>'system', 'class' => 'system-message', 'message' => $ip.' connected'))); //prepare json data
 		send_message($response); //notify all users about new connection
 
 		//make room for new socket
@@ -55,7 +55,7 @@ while (true) {
 				$user_color = $tst_msg->color; //color
 
 				//prepare data to be sent to client
-				$response_text = mask(json_encode(array('type' => 'usermsg', 'name' => $user_name, 'message' => $user_message, 'color' => $user_color)));
+				$response_text = mask(json_encode($tst_msg));
 				send_message($response_text); //send data
 			} else {
 				//prepare data to be sent to client
