@@ -217,10 +217,12 @@
             let template = Handlebars.compile($("#message-response-template").html());
             $target.append(template(message));
         }
+
         renderSystemMessage($target, message) {
             let template = Handlebars.compile($("#message-system-template").html());
             $target.append(template(message));
         }
+
         sendMessage(message) {
             if (message && typeof message != 'string') {
                 message = JSON.stringify(message);
@@ -238,34 +240,47 @@
     }
 
     const App = new Application({
-        address: "ws://192.168.1.9:9000/server.php",
+        address: "ws://" + location.hostname + ":9000/server.php",
         onMessage: e => {
             //e.data
             var message = JSON.parse(e.data);
-            console.log(message);
             switch (message.type) {
                 case 'system' :
+                    if (!App.id) {
+                        App.id = message.id;
+                    }
                     App.renderSystemMessage($('.chat-history'), message);
                     break;
-                case 'out' :
-                    App.renderOutMessage($('.chat-history'), message);
-                    break;
-                case 'in' :
-                    App.renderInMessage($('.chat-history'), message);
+                default :
+                    if (message.author_id != App.id) {
+                        App.renderInMessage($('.chat-history'), message);
+                    } else {
+                        App.renderOutMessage($('.chat-history'), message);
+                    }
                     break;
             }
 
         },
         onOpen: () => {
-            App.sendMessage({name: 'Sion', 'title': 'developer', 'message': 'Socket Application'});
+            //App.sendMessage({id: App.id, 'message': 'Socket Application'});
         }
     });
     $(document).on("click", "#send", e => {
         e.preventDefault ? e.preventDefault() : e.returnValue = false;
         if (!$('#message-to-send').length || !$('#message-to-send').val()) return false;
-        App.sendMessage({name: 'Sion', 'type': 'out', "message": $('#message-to-send').val()});
+        App.sendMessage({author: 'Sion', id: App.id, 'type': 'out', "message": $('#message-to-send').val()});
         $('#message-to-send').val("");
-    })
+    });
+    function readCookie(name) {
+        var nameEQ = name + "=";
+        var ca = document.cookie.split(';');
+        for(var i=0;i < ca.length;i++) {
+            var c = ca[i];
+            while (c.charAt(0)==' ') c = c.substring(1,c.length);
+            if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+        }
+        return null;
+    }
 
 </script>
 
